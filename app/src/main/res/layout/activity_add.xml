@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.AddActivity">
+
+    <TextView
+        android:id="@+id/name"
+        style="@style/Text.Medium.Big"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/nama_donatur"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edt_name"
+        style="@style/TextInput"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:labelFor="@id/edt_name"
+        android:contentDescription="@string/edit_name"
+        android:inputType="textCapSentences"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <TextView
+        android:id="@+id/number"
+        style="@style/Text.Medium.Big"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/nomor_hp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_name" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edt_telp"
+        style="@style/TextInput"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:labelFor="@id/edt_telp"
+        android:contentDescription="@string/edit_telpon"
+        android:inputType="textCapSentences"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/number" />
+
+    <TextView
+        android:id="@+id/address"
+        style="@style/Text.Medium.Big"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/alamat_lengkap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_telp" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edt_address"
+        style="@style/TextInput"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:labelFor="@id/edt_address"
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:lines="5"
+        android:hint="@string/alamat"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address" />
+
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/tambah"
+        android:backgroundTint="@color/cyan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_address" />
+
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/kembali"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_add"
+        app:layout_constraintEnd_toStartOf="@+id/btn_add"
+        app:layout_constraintTop_toTopOf="@+id/btn_add" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

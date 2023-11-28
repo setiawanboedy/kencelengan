@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1027399262279",
+    "project_id": "kencelengan-timer",
+    "storage_bucket": "kencelengan-timer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027399262279:android:e45b6e5f4de5fa79f29162",
+        "android_client_info": {
+          "package_name": "com.masjidjalancahaya.kencelenganreminder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTMV38rqpgDH7V_XUNSfY8YBrbewKUD8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
