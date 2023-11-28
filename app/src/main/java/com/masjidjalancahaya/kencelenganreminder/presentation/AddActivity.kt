@@ -51,7 +51,7 @@ class AddActivity : AppCompatActivity() {
 
             binding.btnAdd.text = "Update"
             binding.btnAdd.setOnClickListener {
-                Snackbar.make(binding.root, "Update data berhasil", Snackbar.LENGTH_LONG).show()
+                viewModel.updateKencelengan(kencel)
             }
         }
 
@@ -62,6 +62,11 @@ class AddActivity : AppCompatActivity() {
         viewModel.isCreateKencelengan.observe(this){
             it.data?.let { it1 -> onCreateKencel(it1) }
         }
+
+        viewModel.isUpdateKencelengan.observe(this){
+            it.data?.let { it1 -> onUpdateKencel(it1) }
+        }
+
     }
 
     private fun onCreateKencel(isCreated: Boolean){
@@ -72,10 +77,17 @@ class AddActivity : AppCompatActivity() {
             Snackbar.make(binding.root, "Tambah data gagal", Snackbar.LENGTH_LONG).show()
     }
 
+    private fun onUpdateKencel(isUpdate: Boolean){
+        if (isUpdate) {
+            Snackbar.make(binding.root, "Update data berhasil", Snackbar.LENGTH_LONG).show()
+            resetForm()
+        }else
+            Snackbar.make(binding.root, "Update data gagal", Snackbar.LENGTH_LONG).show()
+    }
+
     private fun createProduct(){
         if (binding.edtName.text.toString().isNotEmpty() && binding.edtTelp.text.toString().isNotEmpty() && binding.edtAddress.text.toString().isNotEmpty()){
             val kencel = KencelenganModel(
-                id = null,
                 name = binding.edtName.text.toString(),
                 nomor = binding.edtTelp.text.toString().toInt(),
                 address = binding.edtAddress.text.toString(),

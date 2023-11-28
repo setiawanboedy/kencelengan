@@ -24,8 +24,11 @@ class KencelenganViewModel @Inject constructor(
     val allKencelengan: LiveData<ResourceState<List<KencelenganModel>>> get() = _allKencelengan
 
     private var _createKencelengan = MutableLiveData<ResourceState<Boolean>>()
+    private var _updateKencelengan = MutableLiveData<ResourceState<Boolean>>()
 
     val isCreateKencelengan: LiveData<ResourceState<Boolean>> get() = _createKencelengan
+
+    val isUpdateKencelengan: LiveData<ResourceState<Boolean>> get() = _updateKencelengan
 
     fun getKencelengans() {
         val list = repository.getAllKencelengan()
@@ -43,6 +46,16 @@ class KencelenganViewModel @Inject constructor(
             val create = repository.createKencelengan(kencelenganModel)
             create.collect{
                 _createKencelengan.postValue(it)
+            }
+        }
+    }
+
+    fun updateKencelengan(kencelenganModel: KencelenganModel){
+
+        viewModelScope.launch {
+            val update = repository.updateKencelengan(kencelenganModel)
+            update.collect{
+                _updateKencelengan.postValue(it)
             }
         }
     }

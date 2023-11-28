@@ -3,6 +3,7 @@ package com.masjidjalancahaya.kencelenganreminder.presentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.masjidjalancahaya.kencelenganreminder.adapter.KencelenganAdapter
@@ -45,12 +46,15 @@ class MainActivity : AppCompatActivity() {
         viewModel.allKencelengan.observe(this) {items->
             when(items){
                 is ResourceState.Loading -> {
-
+                    binding.pbLoading.visibility = View.VISIBLE
                 }
                 is ResourceState.Success ->{
                     items.data?.let { onGetListKencelengans(it) }
+                    binding.pbLoading.visibility = View.GONE
                 }
-                else -> {}
+                else -> {
+                    binding.pbLoading.visibility = View.GONE
+                }
             }
 
         }

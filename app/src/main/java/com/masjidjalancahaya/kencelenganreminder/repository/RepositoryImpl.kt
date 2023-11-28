@@ -25,6 +25,19 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateKencelengan(kencelenganModel: KencelenganModel): Flow<ResourceState<Boolean>> = flow {
+        emit(ResourceState.Loading())
+        try {
+            val id = kencelenganModel.id
+            if (id != null) {
+                service.upateKencelengan(id, kencelenganModel).await()
+            }
+            emit(ResourceState.Success(true))
+        }catch (e: Exception){
+            emit(ResourceState.Error(e.message.toString()))
+        }
+    }
+
     override fun getAllKencelengan(): Flow<ResourceState<List<KencelenganModel>>> = flow{
         emit(ResourceState.Loading())
         try {
