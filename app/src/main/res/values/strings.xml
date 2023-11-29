@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kencelengan Reminder</string>
+    <string name="app_name">Kencelengan</string>
     <string name="add">Add</string>
     <string name="navigation">navigation</string>
     <string name="nama">Nama:</string>
@@ -12,4 +12,7 @@
     <string name="alamat_lengkap">Alamat Lengkap</string>
     <string name="alamat">Alamat</string>
     <string name="kembali">Kembali</string>
+    <string name="setting">Setting</string>
+    <string name="mulai_timer">Mulai Timer</string>
+    <string name="batalkan_timer">Batalkan Timer</string>
 </resources>

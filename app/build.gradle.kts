@@ -58,6 +58,10 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+    // work manager
+    implementation("androidx.work:work-runtime:2.8.1")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
     // dagger hilt
     implementation ("com.google.dagger:hilt-android:2.48")
     kapt ("com.google.dagger:hilt-compiler:2.48")

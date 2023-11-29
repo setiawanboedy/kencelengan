@@ -2,15 +2,17 @@ package com.masjidjalancahaya.kencelenganreminder.presentation
 
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityAddBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+
 
 @AndroidEntryPoint
 class AddActivity : AppCompatActivity() {
@@ -27,6 +29,11 @@ class AddActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(findViewById(R.id.my_toolbar))
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
+
 
         binding.btnAdd.setOnClickListener {
             createKencel()
@@ -46,7 +53,7 @@ class AddActivity : AppCompatActivity() {
             intent.getParcelableExtra(DATA_KEY)
         }
         if (kencel != null) {
-           binding.edtName.setText(kencel.name)
+            binding.edtName.setText(kencel.name)
             binding.edtTelp.setText(kencel.nomor.toString())
             binding.edtAddress.setText(kencel.address)
 
@@ -114,5 +121,13 @@ class AddActivity : AppCompatActivity() {
         binding.edtTelp.text?.clear()
         binding.edtAddress.text?.clear()
     }
-
+    override fun onOptionsItemSelected( item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }
