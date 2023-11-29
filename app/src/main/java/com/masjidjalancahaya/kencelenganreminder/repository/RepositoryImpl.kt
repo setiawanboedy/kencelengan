@@ -29,6 +29,7 @@ class RepositoryImpl @Inject constructor(
         emit(ResourceState.Loading())
         try {
             val id = kencelenganModel.id
+
             if (id != null) {
                 service.upateKencelengan(id, kencelenganModel).await()
             }
@@ -49,6 +50,7 @@ class RepositoryImpl @Inject constructor(
                 listKencelengan.clear()
                 for (celeng in getListKencelengan.documents){
                     val kenceleng = KencelenganModel(
+                        id = celeng.get("id").toString(),
                         name = celeng.get("name").toString(),
                         nomor = celeng.get("nomor").toString().toInt(),
                         address = celeng.get("address").toString()

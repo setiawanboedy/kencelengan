@@ -5,6 +5,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import timber.log.Timber
 import javax.inject.Inject
 
 class FirebaseService @Inject constructor(
@@ -32,7 +33,7 @@ class FirebaseService @Inject constructor(
             nomor = kencelenganModel.nomor,
             address = kencelenganModel.address
         )
-
+        Timber.tag("iddoct").d(model.toString())
         return kencelengan.document(idDoc).update(model.toMap())
     }
 }

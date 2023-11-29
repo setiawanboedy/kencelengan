@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityAddBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class AddActivity : AppCompatActivity() {
@@ -28,7 +29,7 @@ class AddActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnAdd.setOnClickListener {
-            createProduct()
+            createKencel()
         }
 
         binding.btnBack.setOnClickListener {
@@ -51,7 +52,7 @@ class AddActivity : AppCompatActivity() {
 
             binding.btnAdd.text = "Update"
             binding.btnAdd.setOnClickListener {
-                viewModel.updateKencelengan(kencel)
+                updateKencel(kencel.id!!)
             }
         }
 
@@ -85,7 +86,18 @@ class AddActivity : AppCompatActivity() {
             Snackbar.make(binding.root, "Update data gagal", Snackbar.LENGTH_LONG).show()
     }
 
-    private fun createProduct(){
+    private fun updateKencel(id: String){
+        if (binding.edtName.text.toString().isNotEmpty() && binding.edtTelp.text.toString().isNotEmpty() && binding.edtAddress.text.toString().isNotEmpty()){
+            val kencel = KencelenganModel(
+                id = id,
+                name = binding.edtName.text.toString(),
+                nomor = binding.edtTelp.text.toString().toInt(),
+                address = binding.edtAddress.text.toString(),
+            )
+            viewModel.updateKencelengan(kencel)
+        }
+    }
+    private fun createKencel(){
         if (binding.edtName.text.toString().isNotEmpty() && binding.edtTelp.text.toString().isNotEmpty() && binding.edtAddress.text.toString().isNotEmpty()){
             val kencel = KencelenganModel(
                 name = binding.edtName.text.toString(),
