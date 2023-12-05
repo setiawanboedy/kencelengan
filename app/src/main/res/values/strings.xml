@@ -15,4 +15,12 @@
     <string name="setting">Setting</string>
     <string name="mulai_timer">Mulai Timer</string>
     <string name="batalkan_timer">Batalkan Timer</string>
+    <string name="lokasi_donatur">Lokasi Donatur</string>
+    <string name="tanggal">Atur Tanggal</string>
+    <string name="pilih_tanggal">Pilih Tanggal</string>
+    <string name="pilih_waktu">Pilih Waktu</string>
+    <string name="waktu">Atur Waktu</string>
+    <string name="addmap">addmap</string>
+    <string name="belum_dipilih">Belum dipilih</string>
+    <string name="mylocation">mylocation</string>
 </resources>

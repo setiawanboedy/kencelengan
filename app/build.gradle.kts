@@ -5,8 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
-    id ("kotlin-kapt")
+    id("kotlin-kapt")
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -18,7 +19,7 @@ android {
     }
     defaultConfig {
         applicationId = "com.masjidjalancahaya.kencelenganreminder"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -86,6 +87,11 @@ dependencies {
     // Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
+
+    // Google MAPS
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.libraries.places:places:3.3.0")
 
     // Logging
     implementation("com.jakewharton.timber:timber:5.0.1")

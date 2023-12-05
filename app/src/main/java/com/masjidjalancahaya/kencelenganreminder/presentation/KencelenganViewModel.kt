@@ -5,18 +5,33 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
 import com.masjidjalancahaya.kencelenganreminder.repository.Repository
+import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.utils.ReminderTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.worker.WorkKencel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class KencelenganViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: Repository,
+    workManager: WorkManager,
+    private val reminderTimeConversion: ReminderTimeConversion,
+    private val dateTimeConversion: DateTimeConversion
 ): ViewModel() {
 
     private var _allKencelengan = MutableLiveData<ResourceState<List<KencelenganModel>>>()
@@ -29,6 +44,18 @@ class KencelenganViewModel @Inject constructor(
     val isCreateKencelengan: LiveData<ResourceState<Boolean>> get() = _createKencelengan
 
     val isUpdateKencelengan: LiveData<ResourceState<Boolean>> get() = _updateKencelengan
+
+    private val _selectedStartDate = MutableStateFlow(LocalDate.now())
+    val selectedStartDate = _selectedStartDate.asStateFlow()
+    fun setStartDate(selectedStartDate: LocalDate) {
+        _selectedStartDate.value = selectedStartDate
+    }
+
+    private val _selectedStartTime = MutableStateFlow(LocalTime.now())
+    val selectedStartTime = _selectedStartTime.asStateFlow()
+    fun setStartTime(selectedStartTime: LocalTime) {
+        _selectedStartTime.value = selectedStartTime
+    }
 
     fun getKencelengans() {
         val list = repository.getAllKencelengan()
@@ -43,7 +70,22 @@ class KencelenganViewModel @Inject constructor(
     fun createKencelengan(kencelenganModel: KencelenganModel){
 
         viewModelScope.launch {
-            val create = repository.createKencelengan(kencelenganModel)
+
+            val kencel = KencelenganModel(
+                name = kencelenganModel.name,
+                nomor = kencelenganModel.nomor,
+                address = kencelenganModel.address,
+                startDateAndTime = reminderTimeConversion.toZonedEpochMilli(
+                    startLocalDateTime = LocalDateTime.of(
+                        selectedStartDate.value,
+                        selectedStartTime.value
+                    ),
+                    dateTimeConversion = dateTimeConversion
+                ),
+                lat = kencelenganModel.lat,
+                lang = kencelenganModel.lang
+            )
+            val create = repository.createKencelengan(kencel)
             create.collect{
                 _createKencelengan.postValue(it)
             }
@@ -56,6 +98,22 @@ class KencelenganViewModel @Inject constructor(
             val update = repository.updateKencelengan(kencelenganModel)
             update.collect{
                 _updateKencelengan.postValue(it)
+            }
+        }
+    }
+
+    private val syncFullKencelWorkRequest =
+        PeriodicWorkRequestBuilder<WorkKencel>(15, TimeUnit.MINUTES)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            ).build()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            workManager.apply {
+                enqueue(syncFullKencelWorkRequest)
             }
         }
     }

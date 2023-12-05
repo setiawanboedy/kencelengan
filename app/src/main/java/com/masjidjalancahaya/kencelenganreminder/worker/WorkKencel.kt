@@ -19,16 +19,16 @@ class WorkKencel(context: Context, workerParams: WorkerParameters): Worker(conte
     }
 
     override fun doWork(): Result {
-        showNotification("Berhasil", "Yey, Work Manager Berhasil")
+//        showNotification("Berhasil", "Yey, Work Manager Berhasil")
 
         return getResult()
     }
 
     private fun getResult(): Result {
-        try {
-            return Result.success()
+        return try {
+            Result.success()
         }catch (e: Exception){
-            return Result.failure()
+            Result.failure()
         }
 
     }
@@ -42,11 +42,9 @@ class WorkKencel(context: Context, workerParams: WorkerParameters): Worker(conte
             .setContentText(description)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
-            notification.setChannelId(CHANNEL_ID)
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
+        notification.setChannelId(CHANNEL_ID)
+        notificationManager.createNotificationChannel(channel)
         notificationManager.notify(NOTIFICATION_ID, notification.build())
     }
 }

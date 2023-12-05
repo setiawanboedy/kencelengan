@@ -2,6 +2,7 @@ package com.masjidjalancahaya.kencelenganreminder.data.source.remote
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
@@ -20,20 +21,26 @@ class FirebaseService @Inject constructor(
         return kencelengan.get()
     }
 
+    fun getKencelById(kencelId: String): Task<DocumentSnapshot>{
+        val kencelengan = store.collection(KENCELENGAN)
+        return kencelengan.document(kencelId).get()
+    }
+
     fun createKencelengan(kencelenganModel: KencelenganModel): Task<DocumentReference>{
         val kencelengan = store.collection(KENCELENGAN)
+
         return kencelengan.add(kencelenganModel.toMap())
     }
 
-    fun upateKencelengan(idDoc: String, kencelenganModel: KencelenganModel): Task<Void> {
+    fun updateKencelengan(idDoc: String, kencelenganModel: KencelenganModel): Task<Void> {
         val kencelengan = store.collection(KENCELENGAN)
         val model = KencelenganModel(
             id = idDoc,
             name = kencelenganModel.name,
             nomor = kencelenganModel.nomor,
-            address = kencelenganModel.address
+            address = kencelenganModel.address,
+            startDateAndTime = kencelenganModel.startDateAndTime
         )
-        Timber.tag("iddoct").d(model.toString())
         return kencelengan.document(idDoc).update(model.toMap())
     }
 }

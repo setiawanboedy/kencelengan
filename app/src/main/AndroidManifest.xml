@@ -5,7 +5,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".App"
@@ -18,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KencelenganReminder"
         tools:targetApi="31">
+        <activity
+            android:name=".presentation.MapResultActivity"
+            android:exported="false" />
         <activity
             android:name=".presentation.SettingActivity"
             android:exported="false" />
@@ -33,6 +40,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
     </application>
 
 </manifest>
