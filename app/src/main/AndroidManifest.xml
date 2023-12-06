@@ -22,6 +22,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KencelenganReminder"
         tools:targetApi="31">
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
         <activity
             android:name=".presentation.MapResultActivity"
             android:exported="false" />
@@ -40,7 +45,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <receiver android:name=".notifications.KencelBroadcastReceiver" />
+        <receiver android:name=".notifications.BootupNotificationBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />

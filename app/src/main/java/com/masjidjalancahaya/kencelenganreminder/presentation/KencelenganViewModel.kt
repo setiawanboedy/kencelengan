@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.Constraints
 import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
@@ -19,7 +20,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -40,9 +43,10 @@ class KencelenganViewModel @Inject constructor(
 
     private var _createKencelengan = MutableLiveData<ResourceState<Boolean>>()
     private var _updateKencelengan = MutableLiveData<ResourceState<Boolean>>()
+    private var _deleteKencelengan = MutableLiveData<ResourceState<Boolean>>()
 
     val isCreateKencelengan: LiveData<ResourceState<Boolean>> get() = _createKencelengan
-
+    val isDeleteKencelengan: LiveData<ResourceState<Boolean>> get() = _deleteKencelengan
     val isUpdateKencelengan: LiveData<ResourceState<Boolean>> get() = _updateKencelengan
 
     private val _selectedStartDate = MutableStateFlow(LocalDate.now())
@@ -58,8 +62,9 @@ class KencelenganViewModel @Inject constructor(
     }
 
     fun getKencelengans() {
-        val list = repository.getAllKencelengan()
+
         viewModelScope.launch {
+            val list = repository.getAllKencelengan()
             list.collect{
                 _allKencelengan.postValue(it)
             }
@@ -95,15 +100,34 @@ class KencelenganViewModel @Inject constructor(
     fun updateKencelengan(kencelenganModel: KencelenganModel){
 
         viewModelScope.launch {
-            val update = repository.updateKencelengan(kencelenganModel)
+            val kencel = kencelenganModel.copy(
+                startDateAndTime = reminderTimeConversion.toZonedEpochMilli(
+                    startLocalDateTime = LocalDateTime.of(
+                        selectedStartDate.value,
+                        selectedStartTime.value
+                    ),
+                    dateTimeConversion = dateTimeConversion
+                ) ?: kencelenganModel.startDateAndTime,
+            )
+
+            val update = repository.updateKencelengan(kencel)
             update.collect{
                 _updateKencelengan.postValue(it)
             }
         }
     }
 
+    fun deleteKencelengan(kencelId: String){
+        viewModelScope.launch {
+            val delete = repository.deleteKenclengan(kencelId)
+            delete.collect{
+                _deleteKencelengan.postValue(it)
+            }
+        }
+    }
+
     private val syncFullKencelWorkRequest =
-        PeriodicWorkRequestBuilder<WorkKencel>(15, TimeUnit.MINUTES)
+        PeriodicWorkRequest.Builder(WorkKencel::class.java, 15, TimeUnit.MINUTES)
             .setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)

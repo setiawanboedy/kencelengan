@@ -7,5 +7,5 @@ interface ReminderTimeConversion {
     fun toZonedEpochMilli(
         startLocalDateTime: LocalDateTime,
         dateTimeConversion: DateTimeConversion
-    ): Long
+    ): Long?
 }

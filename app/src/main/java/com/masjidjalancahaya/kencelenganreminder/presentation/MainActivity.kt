@@ -1,7 +1,9 @@
 package com.masjidjalancahaya.kencelenganreminder.presentation
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -13,15 +15,17 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.adapter.KencelenganAdapter
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMainBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnItemAdapterListener {
 
 
     private lateinit var binding: ActivityMainBinding
@@ -60,11 +64,6 @@ class MainActivity : AppCompatActivity() {
 
         initRecyclerView()
 
-        kencelengAdapter.setOnItemClick { data ->
-            val moveWithObjectIntent = Intent(this@MainActivity, AddActivity::class.java)
-            moveWithObjectIntent.putExtra(AddActivity.DATA_KEY, data)
-            startActivity(moveWithObjectIntent)
-        }
     }
 
     private fun initDataProduct(){
@@ -84,6 +83,20 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        viewModel.isDeleteKencelengan.observe(this){isDelete ->
+            when(isDelete){
+                is ResourceState.Loading -> {
+                }
+                is ResourceState.Success ->{
+                    onDeleteKencel(isDelete.data ?: false)
+                    viewModel.getKencelengans()
+                }
+                else -> {
+                }
+            }
+
+        }
+
     }
 
     private fun onGetListKencelengans(items: List<KencelenganModel>){
@@ -92,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView(){
-        kencelengAdapter = KencelenganAdapter()
+        kencelengAdapter = KencelenganAdapter(this,this)
         binding.rvList.apply {
             adapter = kencelengAdapter
             layoutManager = LinearLayoutManager(applicationContext)
@@ -111,10 +124,54 @@ class MainActivity : AppCompatActivity() {
         }
 
         else -> {
-            // The user's action isn't recognized.
-            // Invoke the superclass to handle it.
             super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPrimaryClick(item: KencelenganModel) {
+        val moveWithObjectIntent = Intent(this@MainActivity, AddActivity::class.java)
+        moveWithObjectIntent.putExtra(AddActivity.DATA_KEY, item)
+        startActivity(moveWithObjectIntent)
+    }
+
+    override fun onSecondaryClick(item: KencelenganModel) {
+            val gmmIntentUri = Uri.parse("geo:0,0?q=${item.lat}, ${item.lang}")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            startActivity(mapIntent)
+    }
+
+    override fun onLongPressedClick(item: KencelenganModel) {
+        showDeleteDialog(item.id)
+    }
+
+    private fun showDeleteDialog(id: String?) {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Hapus Kencelengan")
+        builder.setMessage("Apakah Anda yakin akan menghapus kencelengan ini?")
+
+        // Set up the delete button
+        builder.setPositiveButton("Hapus") { _, _ ->
+            if (id != null){
+                viewModel.deleteKencelengan(id)
+            }
+        }
+
+        // Set up the cancel button
+        builder.setNegativeButton("Batal") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // Create and show the dialog
+        builder.create().show()
+    }
+
+    private fun onDeleteKencel(isDelete: Boolean){
+        if (isDelete) {
+            Snackbar.make(binding.root, "Hapus data berhasil", Snackbar.LENGTH_LONG).show()
+        }else
+            Snackbar.make(binding.root, "Hapus data gagal", Snackbar.LENGTH_LONG).show()
     }
 
 }

@@ -8,11 +8,12 @@ import java.time.LocalDateTime
 data class KencelenganModel(
     var id: String? = "",
     var name: String? = null,
-    var nomor: Int? = 0,
+    var nomor: Long? = 0,
     var address: String? = "",
-    var startDateAndTime: Long? = 0,
-    var lat: String? = null,
-    var lang: String? = null
+    var isBlue: Boolean? = false,
+    var startDateAndTime: Long? = null,
+    var lat: Double? = null,
+    var lang: Double? = null
 ): Parcelable {
     fun toMap(): Map<String, Any?>{
         return mapOf(
@@ -20,6 +21,7 @@ data class KencelenganModel(
             "name" to name,
             "nomor" to nomor,
             "address" to address,
+            "isBlue" to isBlue,
             "startDateAndTime" to startDateAndTime,
             "lat" to lat,
             "lang" to lang

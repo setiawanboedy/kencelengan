@@ -1,15 +1,19 @@
 package com.masjidjalancahaya.kencelenganreminder.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ItemDonaturBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
 import timber.log.Timber
 
-class KencelenganAdapter: ListAdapter<KencelenganModel, KencelenganAdapter.ViewHolder>(differCallback) {
+class KencelenganAdapter(private val context: Context, private val listener: OnItemAdapterListener): ListAdapter<KencelenganModel, KencelenganAdapter.ViewHolder>(differCallback) {
     companion object{
         val differCallback = object : DiffUtil.ItemCallback<KencelenganModel>(){
             override fun areItemsTheSame(
@@ -26,17 +30,27 @@ class KencelenganAdapter: ListAdapter<KencelenganModel, KencelenganAdapter.ViewH
     }
 
     inner class ViewHolder(private val binding: ItemDonaturBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: KencelenganModel, listener: ((KencelenganModel) -> Unit)?){
+        fun bind(data: KencelenganModel, listener: OnItemAdapterListener){
 
             with(binding){
                 tvName.text = data.name
                 tvTelp.text = data.nomor.toString()
                 tvAddress.text = data.address
 
+                if (data.isBlue!!){
+                    val cyanColor = ContextCompat.getColor(context, R.color.cyan)
+                    binding.itemDonatur.setCardBackgroundColor(cyanColor)
+                }
+
                 selected.setOnClickListener {
-                    listener?.let {
-                        listener(data)
-                    }
+                    listener.onPrimaryClick(data)
+                }
+                ibDirection.setOnClickListener {
+                    listener.onSecondaryClick(data)
+                }
+                selected.setOnLongClickListener {
+                    listener.onLongPressedClick(data)
+                    true
                 }
             }
         }
@@ -52,8 +66,5 @@ class KencelenganAdapter: ListAdapter<KencelenganModel, KencelenganAdapter.ViewH
         if (currentItem != null) holder.bind(currentItem, listener)
     }
 
-    private var listener : ((KencelenganModel) -> Unit)? = null
-    fun setOnItemClick(listener: (KencelenganModel) -> Unit){
-        this.listener = listener
-    }
+
 }

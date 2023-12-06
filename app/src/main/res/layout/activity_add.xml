@@ -186,15 +186,26 @@
                 android:contentDescription="@string/addmap" />
 
             <TextView
-                android:id="@+id/location"
-                android:layout_width="wrap_content"
+                android:id="@+id/location_address"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:textSize="16sp"
+                android:layout_marginEnd="8dp"
                 android:text="@string/belum_dipilih"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/ib_location"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ib_location"
                 app:layout_constraintTop_toTopOf="@+id/ib_location" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/btn_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Diambil    "
+                app:layout_constraintStart_toStartOf="@+id/ib_location"
+                app:layout_constraintTop_toBottomOf="@+id/ib_location" />
 
             <Button
                 android:id="@+id/btn_add"
@@ -207,7 +218,21 @@
                 android:text="@string/tambah"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ib_location" />
+                app:layout_constraintTop_toBottomOf="@id/btn_switch" />
+
+            <Button
+                android:id="@+id/btn_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="32dp"
+                android:backgroundTint="@color/cyan"
+                android:text="@string/update"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_switch" />
 
             <Button
                 android:id="@+id/btn_back"

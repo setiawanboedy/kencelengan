@@ -4,12 +4,25 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.work.Worker
+import androidx.hilt.work.HiltWorker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.masjidjalancahaya.kencelenganreminder.repository.Repository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
-class WorkKencel(context: Context, workerParams: WorkerParameters): Worker(context, workerParams) {
+
+@HiltWorker
+class WorkKencel @AssistedInject constructor (
+    @Assisted val appContext: Context,
+    @Assisted val workerParams: WorkerParameters,
+    private val repository: Repository
+): CoroutineWorker(appContext = appContext, params = workerParams) {
+
 
     companion object {
         private val TAG = WorkKencel::class.java.simpleName
@@ -18,9 +31,10 @@ class WorkKencel(context: Context, workerParams: WorkerParameters): Worker(conte
         const val CHANNEL_NAME = "kencelengan channel"
     }
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
 //        showNotification("Berhasil", "Yey, Work Manager Berhasil")
 
+        repository.getAllKencelengan()
         return getResult()
     }
 
@@ -28,6 +42,7 @@ class WorkKencel(context: Context, workerParams: WorkerParameters): Worker(conte
         return try {
             Result.success()
         }catch (e: Exception){
+            Timber.tag("work").d("not working")
             Result.failure()
         }
 

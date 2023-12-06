@@ -39,7 +39,7 @@
         android:backgroundTint="@color/cyan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/add_location"
+        android:src="@drawable/add_location"
         android:contentDescription="@string/addmap" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

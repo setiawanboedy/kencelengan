@@ -23,4 +23,9 @@
     <string name="addmap">addmap</string>
     <string name="belum_dipilih">Belum dipilih</string>
     <string name="mylocation">mylocation</string>
+    <string name="update">Update</string>
+    <string name="reminder">Reminder</string>
+    <string name="kencel">Kencel</string>
+    <!--notification messages -->
+    <string name="used_for_string_notification">Used for %1$s notifications</string>
 </resources>

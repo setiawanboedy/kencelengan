@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import timber.log.Timber
 import java.time.ZonedDateTime
 
 class KencelNotificationSchedulerImpl(
@@ -14,13 +15,14 @@ class KencelNotificationSchedulerImpl(
     override fun schedule(kencelId: String, time: Long) {
         if (time < ZonedDateTime.now().toInstant().toEpochMilli()) return
         val intent = Intent(context, KencelBroadcastReceiver::class.java)
+            .putExtra(KENCEL_NOTIF_SCHED_INTENT, kencelId)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             kencelId.hashCode(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-
+        Timber.tag("sch").d("up")
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             time,

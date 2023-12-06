@@ -22,6 +22,7 @@ class KencelNotificationService(
     }
 
     companion object {
+        const val KENCEL_GROUP_ID = "kencel_group"
         const val REMINDER_CHANNEL_ID = "reminder_channel"
     }
 }

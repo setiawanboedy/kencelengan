@@ -31,41 +31,41 @@ class SettingActivity : AppCompatActivity() {
         workManager = WorkManager.getInstance(this)
 
         binding.btnPeriodicTask.setOnClickListener {
-            startPeriodicTask()
+//            startPeriodicTask()
         }
 
         binding.btnCancelTask.setOnClickListener {
-            cancelPeriodicTask()
+//            cancelPeriodicTask()
         }
 
     }
 
-    @SuppressLint("InvalidPeriodicWorkRequestInterval")
-    private fun startPeriodicTask() {
-        val data = Data.Builder()
-            .putString("", "")
-            .build()
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        periodicWorkRequest = PeriodicWorkRequest.Builder(WorkKencel::class.java, 1, TimeUnit.MINUTES)
-            .setInputData(data)
-            .setConstraints(constraints)
-            .build()
-        workManager.enqueue(periodicWorkRequest)
-        workManager.getWorkInfoByIdLiveData(periodicWorkRequest.id)
-            .observe(this@SettingActivity) { workInfo ->
-                val status = workInfo.state.name
-                binding.textStatus.append("\n" + status)
-                binding.btnCancelTask.isEnabled = false
-                if (workInfo.state == WorkInfo.State.ENQUEUED) {
-                    binding.btnCancelTask.isEnabled = true
-                }
-            }
-    }
-
-    private fun cancelPeriodicTask() {
-        workManager.cancelWorkById(periodicWorkRequest.id)
-    }
+//    @SuppressLint("InvalidPeriodicWorkRequestInterval")
+//    private fun startPeriodicTask() {
+//        val data = Data.Builder()
+//            .putString("", "")
+//            .build()
+//        val constraints = Constraints.Builder()
+//            .setRequiredNetworkType(NetworkType.CONNECTED)
+//            .build()
+//        periodicWorkRequest = PeriodicWorkRequest.Builder(WorkKencel::class.java, 1, TimeUnit.MINUTES)
+//            .setInputData(data)
+//            .setConstraints(constraints)
+//            .build()
+//        workManager.enqueue(periodicWorkRequest)
+//        workManager.getWorkInfoByIdLiveData(periodicWorkRequest.id)
+//            .observe(this@SettingActivity) { workInfo ->
+//                val status = workInfo.state.name
+//                binding.textStatus.append("\n" + status)
+//                binding.btnCancelTask.isEnabled = false
+//                if (workInfo.state == WorkInfo.State.ENQUEUED) {
+//                    binding.btnCancelTask.isEnabled = true
+//                }
+//            }
+//    }
+//
+//    private fun cancelPeriodicTask() {
+//        workManager.cancelWorkById(periodicWorkRequest.id)
+//    }
 
 }

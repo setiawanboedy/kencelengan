@@ -10,6 +10,8 @@ interface Repository {
 
     suspend fun updateKencelengan(kencelenganModel: KencelenganModel): Flow<ResourceState<Boolean>>
 
-    fun getKencelById(kencelId: String): Flow<KencelenganModel>
-    fun getAllKencelengan(): Flow<ResourceState<List<KencelenganModel>>>
+    suspend fun getKencelById(kencelId: String): Flow<KencelenganModel>
+    suspend fun getAllKencelengan(): Flow<ResourceState<List<KencelenganModel>>>
+    fun deleteKenclengan(kencelId: String): Flow<ResourceState<Boolean>>
+    suspend fun scheduleAllKencelItemNotifications()
 }

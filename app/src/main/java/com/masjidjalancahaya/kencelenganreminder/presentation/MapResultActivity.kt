@@ -2,6 +2,7 @@ package com.masjidjalancahaya.kencelenganreminder.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityAddBinding
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMapResultBinding
+import com.masjidjalancahaya.kencelenganreminder.model.LatLang
 import com.masjidjalancahaya.kencelenganreminder.utils.WindowMapAdapter
 import com.masjidjalancahaya.kencelenganreminder.utils.convertLatLngToAddress
 import timber.log.Timber
@@ -38,6 +40,7 @@ class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapResultBinding
     private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
+    private var latLang: LatLang? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +71,16 @@ class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+
+        binding.pickLocation.setOnClickListener {
+            val resultIntent = Intent()
+            if (latLang != null){
+                resultIntent.putExtra(EXTRA_SELECTED_VALUE, latLang)
+                setResult(RESULT_CODE, resultIntent)
+                finish()
+            }
+
+        }
     }
 
     private fun setupMap(){
@@ -93,6 +106,7 @@ class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setMarker(latLng: LatLng){
+        latLang = LatLang(latLng.latitude, latLng.longitude)
         val address = latLng.convertLatLngToAddress(this)
         currentMarker?.remove()
         currentMarker = mMap.addMarker(
@@ -162,7 +176,10 @@ class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+    }
 
-
+    companion object {
+        const val EXTRA_SELECTED_VALUE = "extra_selected_value"
+        const val RESULT_CODE = 110
     }
 }
