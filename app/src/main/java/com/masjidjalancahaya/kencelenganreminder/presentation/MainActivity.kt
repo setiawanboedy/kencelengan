@@ -21,8 +21,12 @@ import com.masjidjalancahaya.kencelenganreminder.adapter.KencelenganAdapter
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMainBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
 import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
+import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDateTime
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnItemAdapterListener {
@@ -31,6 +35,9 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: KencelenganViewModel by viewModels()
     private lateinit var kencelengAdapter: KencelenganAdapter
+
+    @Inject
+    lateinit var dateTimeConversion: DateTimeConversion
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -54,19 +61,24 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
 
+        viewModel.getKencelengans()
+        initDataKencel()
+        setupViewAndClick()
+        initRecyclerView()
+
+    }
+    private fun setupViewAndClick(){
         binding.floatingActionButton.setOnClickListener {
             val moveIntent = Intent(this@MainActivity, AddActivity::class.java)
             startActivity(moveIntent)
         }
 
-        viewModel.getKencelengans()
-        initDataProduct()
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.getKencelengans()
 
-        initRecyclerView()
-
+        }
     }
-
-    private fun initDataProduct(){
+    private fun initDataKencel(){
         viewModel.allKencelengan.observe(this) {items->
             when(items){
                 is ResourceState.Loading -> {
@@ -75,9 +87,12 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
                 is ResourceState.Success ->{
                     items.data?.let { onGetListKencelengans(it) }
                     binding.pbLoading.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
                 }
                 else -> {
                     binding.pbLoading.visibility = View.GONE
+                    binding.swipeRefresh.isRefreshing = false
+
                 }
             }
 

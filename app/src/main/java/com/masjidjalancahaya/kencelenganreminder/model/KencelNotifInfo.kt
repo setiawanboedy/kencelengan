@@ -1,9 +1,10 @@
 package com.masjidjalancahaya.kencelenganreminder.model
 
 data class KencelNotifInfo(
-    val title: String,
-    val description: String,
-    val id: String,
-    val notificationChannel: String,
-    val notificationZonedMilliTime: Long
+    var title: String,
+    var description: String,
+    var id: String,
+    var isBlue: Boolean,
+    var notificationChannel: String,
+    var notificationZonedMilliTime: Long
 )

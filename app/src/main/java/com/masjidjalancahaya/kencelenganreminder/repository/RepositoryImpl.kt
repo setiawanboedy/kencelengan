@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
@@ -23,7 +24,6 @@ class RepositoryImpl @Inject constructor(
             service.updateKencelengan(id, kencelenganModel).await()
             val kencel = kencelenganModel.copy(id = id)
             scheduleNotification(kencel)
-            Timber.tag("create").d(kencelenganModel.toString())
             emit(ResourceState.Success(true))
         }catch (e: Exception){
             emit(ResourceState.Error(e.message.toString()))
@@ -33,8 +33,8 @@ class RepositoryImpl @Inject constructor(
     override suspend fun updateKencelengan(kencelenganModel: KencelenganModel): Flow<ResourceState<Boolean>> = flow {
         emit(ResourceState.Loading())
         try {
+            Timber.tag("update").d("Tes $kencelenganModel")
             val id = kencelenganModel.id
-
             if (id != null) {
                 service.updateKencelengan(id, kencelenganModel).await()
             }

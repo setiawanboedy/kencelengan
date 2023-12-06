@@ -12,6 +12,7 @@ class KencelNotificationService(
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     fun showNotification(info: KencelNotifInfo){
+
         val notification = NotificationCompat.Builder(context, info.notificationChannel)
             .setSmallIcon(R.drawable.ic_setting)
             .setContentTitle(info.title)

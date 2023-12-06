@@ -9,7 +9,7 @@ class ReminderTimeConversionImpl : ReminderTimeConversion {
         dateTimeConversion: DateTimeConversion
     ): Long {
         return dateTimeConversion.localDateTimeToZonedEpochMilli(
-            startLocalDateTime.minusMinutes(1)
+            startLocalDateTime
         )
     }
 }

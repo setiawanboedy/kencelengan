@@ -15,6 +15,7 @@ fun KencelenganModel.toNotifInfo(): KencelNotifInfo{
         title = name ?: "",
         description = address ?: "",
         id = id ?: "",
+        isBlue = isBlue ?: false,
         notificationChannel = channel,
         notificationZonedMilliTime = startDateAndTime ?: 0
     )

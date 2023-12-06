@@ -24,17 +24,18 @@ class KencelBroadcastReceiver : BroadcastReceiver() {
         val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
         val id = intent?.getStringExtra(KENCEL_NOTIF_SCHED_INTENT)
         val service = context?.let { KencelNotificationService(it) }
-        coroutineScope.launch {
-            val item = id?.let {
-                kencelRepository.getKencelById(it)
-            }
+        if (id != null){
+            coroutineScope.launch {
+                val item = kencelRepository.getKencelById(id)
 
-            item?.collect{model ->
-                model.toNotifInfo().let {info ->
+                item.collect{ model ->
                     val update = model.copy(isBlue = true)
-                    kencelRepository.updateKencelengan(update)
+                    kencelRepository.updateKencelengan(update).collect{}
                     Timber.tag("model").d(update.toString())
-                    service?.showNotification(info)
+                    model.toNotifInfo().let {info ->
+
+                        service?.showNotification(info)
+                    }
                 }
             }
         }

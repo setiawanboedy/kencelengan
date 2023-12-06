@@ -34,7 +34,8 @@ class FirebaseService @Inject constructor(
 
     fun updateKencelengan(idDoc: String, kencelenganModel: KencelenganModel): Task<Void> {
         val kencelengan = store.collection(KENCELENGAN)
-        return kencelengan.document(idDoc).update(kencelenganModel.toMap())
+        val update = kencelenganModel.copy(id = idDoc)
+        return kencelengan.document(idDoc).update(update.toMap())
     }
 
     fun deleteKencelengan(idDoc: String): Task<Void>{

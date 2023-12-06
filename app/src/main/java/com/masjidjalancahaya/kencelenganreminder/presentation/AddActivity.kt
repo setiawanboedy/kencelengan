@@ -21,6 +21,8 @@ import com.masjidjalancahaya.kencelenganreminder.presentation.utils.DatePickerFr
 import com.masjidjalancahaya.kencelenganreminder.presentation.utils.TimePickerFragment
 import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
 import com.masjidjalancahaya.kencelenganreminder.utils.convertLatLngToAddress
+import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
+import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToTimeString
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.time.LocalDate
@@ -111,8 +113,8 @@ class AddActivity : AppCompatActivity(),
             binding.edtAddress.setText(kencel.address)
             binding.btnSwitch.isChecked = kencel.isBlue!!
             binding.locationAddress.text = latLng.convertLatLngToAddress(this)
-            binding.tvDate.text = dateTimeDoubleToDateString(localDateTime)
-            binding.tvTime.text = dateTimeDoubleToTimeString(localDateTime)
+            binding.tvDate.text = localDateTime.dateTimeDoubleToDateString()
+            binding.tvTime.text = localDateTime.dateTimeDoubleToTimeString()
 
             binding.btnUpdate.visibility = View.VISIBLE
             binding.btnAdd.visibility = View.INVISIBLE
@@ -123,18 +125,6 @@ class AddActivity : AppCompatActivity(),
         }
     }
 
-    private fun dateTimeDoubleToDateString(localDateTime: LocalDateTime):String {
-        val date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        return dateFormat.format(date)
-    }
-
-    private fun dateTimeDoubleToTimeString(localDateTime: LocalDateTime): String {
-
-        val time = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return dateFormat.format(time)
-    }
 
     private fun initDataProduct(){
         viewModel.isCreateKencelengan.observe(this){
@@ -158,7 +148,7 @@ class AddActivity : AppCompatActivity(),
     private fun onUpdateKencel(isUpdate: Boolean){
         if (isUpdate) {
             Snackbar.make(binding.root, "Update data berhasil", Snackbar.LENGTH_LONG).show()
-            resetForm()
+
         }else
             Snackbar.make(binding.root, "Update data gagal", Snackbar.LENGTH_LONG).show()
     }
