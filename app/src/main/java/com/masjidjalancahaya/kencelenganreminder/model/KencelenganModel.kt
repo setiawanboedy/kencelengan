@@ -11,6 +11,7 @@ data class KencelenganModel(
     var nomor: Long? = 0,
     var address: String? = "",
     var isBlue: Boolean? = false,
+    var distance: Double? = null,
     var startDateAndTime: Long? = null,
     var lat: Double? = null,
     var lang: Double? = null

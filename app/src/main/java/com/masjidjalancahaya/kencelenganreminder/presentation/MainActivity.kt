@@ -3,6 +3,8 @@ package com.masjidjalancahaya.kencelenganreminder.presentation
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,7 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.adapter.KencelenganAdapter
@@ -23,8 +31,10 @@ import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMainBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
 import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
 import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
+import com.masjidjalancahaya.kencelenganreminder.utils.calculateDistance
 import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -35,6 +45,8 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: KencelenganViewModel by viewModels()
     private lateinit var kencelengAdapter: KencelenganAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var currentLatLng: LatLng? = null
 
     @Inject
     lateinit var dateTimeConversion: DateTimeConversion
@@ -44,6 +56,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
+
                 Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Permission rejected", Toast.LENGTH_SHORT).show()
@@ -61,12 +74,31 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
 
+        permissionLocationGranted()
         viewModel.getKencelengans()
         initDataKencel()
         setupViewAndClick()
         initRecyclerView()
 
     }
+
+    private fun permissionLocationGranted(){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ContextCompat.checkSelfPermission(
+                this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    currentLatLng = LatLng(it.latitude, it.longitude)
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     private fun setupViewAndClick(){
         binding.floatingActionButton.setOnClickListener {
             val moveIntent = Intent(this@MainActivity, AddActivity::class.java)
@@ -114,8 +146,17 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
     }
 
     private fun onGetListKencelengans(items: List<KencelenganModel>){
+        if (currentLatLng != null){
 
-        kencelengAdapter.submitList(items)
+            val listBlue = items.filter { it.isBlue!! }
+                .map { it.copy(distance = LatLng(it.lat!!, it.lang!!).calculateDistance(currentLatLng!!)) }
+                .sortedBy { it.distance }
+            val listGrey = items.filter {
+                !it.isBlue!!
+            }
+            val itemsCombine = listBlue+listGrey
+            kencelengAdapter.submitList(itemsCombine)
+        }
     }
 
     private fun initRecyclerView(){

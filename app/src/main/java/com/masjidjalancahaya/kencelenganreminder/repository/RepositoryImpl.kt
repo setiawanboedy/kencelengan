@@ -33,7 +33,6 @@ class RepositoryImpl @Inject constructor(
     override suspend fun updateKencelengan(kencelenganModel: KencelenganModel): Flow<ResourceState<Boolean>> = flow {
         emit(ResourceState.Loading())
         try {
-            Timber.tag("update").d("Tes $kencelenganModel")
             val id = kencelenganModel.id
             if (id != null) {
                 service.updateKencelengan(id, kencelenganModel).await()

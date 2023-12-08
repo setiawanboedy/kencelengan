@@ -65,7 +65,6 @@ class KencelenganViewModel @Inject constructor(
 
         viewModelScope.launch {
             val list = repository.getAllKencelengan()
-            val dateTimeNow = LocalDateTime.now()
             list.collect{
                 _allKencelengan.postValue(it)
             }

@@ -1,14 +1,12 @@
 package com.masjidjalancahaya.kencelenganreminder.presentation
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -20,7 +18,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
@@ -28,7 +25,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.masjidjalancahaya.kencelenganreminder.R
-import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityAddBinding
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMapResultBinding
 import com.masjidjalancahaya.kencelenganreminder.model.LatLang
 import com.masjidjalancahaya.kencelenganreminder.utils.WindowMapAdapter
@@ -48,29 +44,27 @@ class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(binding.root)
 
         setupMap()
+        permissionLocationGranted()
         setClickAndView()
     }
 
-    private fun setClickAndView(){
-        if (ActivityCompat.checkSelfPermission(
-                this,
+    private fun permissionLocationGranted(){
+        if (ContextCompat.checkSelfPermission(
+                this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
-            return
-        }
-        binding.myLocation.setOnClickListener {
-
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val currentLatLng = LatLng(it.latitude, it.longitude)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+            binding.myLocation.setOnClickListener {
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        val currentLatLng = LatLng(it.latitude, it.longitude)
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                    }
                 }
             }
         }
+    }
+    private fun setClickAndView(){
 
         binding.pickLocation.setOnClickListener {
             val resultIntent = Intent()

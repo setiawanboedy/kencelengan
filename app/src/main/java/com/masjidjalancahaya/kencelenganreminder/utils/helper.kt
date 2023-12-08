@@ -3,6 +3,7 @@ package com.masjidjalancahaya.kencelenganreminder.utils
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.location.Geocoder
+import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import java.io.IOException
 import java.time.LocalDateTime
@@ -36,4 +37,16 @@ fun LocalDateTime.dateTimeDoubleToTimeString(): String {
     val time = Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
     val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     return dateFormat.format(time)
+}
+
+fun LatLng.calculateDistance(start: LatLng): Double {
+    val startLatitude = start.latitude
+    val startLongitude = start.longitude
+
+    val endLatitude = this.latitude
+    val endLongitude = this.longitude
+
+    val results = FloatArray(1)
+    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results)
+    return results[0].toDouble() // Distance in meters
 }
