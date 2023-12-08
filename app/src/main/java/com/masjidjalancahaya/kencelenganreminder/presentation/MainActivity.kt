@@ -74,8 +74,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         }
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.getKencelengans()
-
+            viewModel.swipeRefreshKencel()
         }
     }
     private fun initDataKencel(){
@@ -133,8 +132,8 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
     }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_settings -> {
-            val moveIntent = Intent(this@MainActivity, SettingActivity::class.java)
-            startActivity(moveIntent)
+//            val moveIntent = Intent(this@MainActivity, SettingActivity::class.java)
+//            startActivity(moveIntent)
             true
         }
 

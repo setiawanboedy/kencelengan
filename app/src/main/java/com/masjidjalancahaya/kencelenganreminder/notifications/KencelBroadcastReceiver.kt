@@ -31,7 +31,6 @@ class KencelBroadcastReceiver : BroadcastReceiver() {
                 item.collect{ model ->
                     val update = model.copy(isBlue = true)
                     kencelRepository.updateKencelengan(update).collect{}
-                    Timber.tag("model").d(update.toString())
                     model.toNotifInfo().let {info ->
 
                         service?.showNotification(info)

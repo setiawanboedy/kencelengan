@@ -204,6 +204,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Diambil    "
+                android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="@+id/ib_location"
                 app:layout_constraintTop_toBottomOf="@+id/ib_location" />
 

@@ -68,18 +68,28 @@ class KencelenganViewModel @Inject constructor(
             val dateTimeNow = LocalDateTime.now()
             list.collect{
                 _allKencelengan.postValue(it)
-//                it.data?.forEach {data ->
-//                    val specificDateTime = dateTimeConversion.zonedEpochMilliToLocalDateTime(data.startDateAndTime!!)
-//
-//                    if (specificDateTime.isBefore(dateTimeNow)){
-//                        val update = data.copy(isBlue = true)
-//                        Timber.tag("update").d("Tes $update")
-//                        repository.updateKencelengan(update).collect()
-//                    }
-//                }
             }
         }
 
+    }
+
+
+    fun swipeRefreshKencel(){
+        viewModelScope.launch {
+            val list = repository.getAllKencelengan()
+            val dateTimeNow = LocalDateTime.now()
+            list.collect{
+                _allKencelengan.postValue(it)
+                it.data?.forEach {data ->
+                    val specificDateTime = dateTimeConversion.zonedEpochMilliToLocalDateTime(data.startDateAndTime!!)
+
+                    if (specificDateTime.isBefore(dateTimeNow)){
+                        val update = data.copy(isBlue = true)
+                        repository.updateKencelengan(update).collect()
+                    }
+                }
+            }
+        }
     }
 
     fun createKencelengan(kencelenganModel: KencelenganModel){

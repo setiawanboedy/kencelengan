@@ -116,6 +116,7 @@ class AddActivity : AppCompatActivity(),
             binding.tvDate.text = localDateTime.dateTimeDoubleToDateString()
             binding.tvTime.text = localDateTime.dateTimeDoubleToTimeString()
 
+            binding.btnSwitch.visibility = View.VISIBLE
             binding.btnUpdate.visibility = View.VISIBLE
             binding.btnAdd.visibility = View.INVISIBLE
             binding.btnUpdate.setOnClickListener {
@@ -230,7 +231,9 @@ class AddActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun setupViewsAndOnClickListeners(){
+
         binding.btnAdd.setOnClickListener {
+
             createKencel()
         }
 
