@@ -3,9 +3,8 @@ package com.masjidjalancahaya.kencelenganreminder
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.WorkerFactory
+import com.google.android.libraries.places.api.Places
 import com.masjidjalancahaya.kencelenganreminder.notifications.KencelNotificationChannels
-
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,6 +16,9 @@ class App : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
+        }
         Timber.plant(Timber.DebugTree())
         KencelNotificationChannels(applicationContext).createKencelNotificationChannels()
     }

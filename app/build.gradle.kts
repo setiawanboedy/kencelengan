@@ -1,4 +1,4 @@
-
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id("com.android.application")
@@ -10,12 +10,15 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
+val MAPS_API_KEY: String = gradleLocalProperties(rootDir).getProperty("MAPS_API_KEY")
+
 android {
     namespace = "com.masjidjalancahaya.kencelenganreminder"
     compileSdk = 34
 
     buildFeatures{
         viewBinding = true
+        buildConfig = true
     }
     defaultConfig {
         applicationId = "com.masjidjalancahaya.kencelenganreminder"
@@ -28,7 +31,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "MAPS_API_KEY", MAPS_API_KEY)
+        }
         release {
+            buildConfigField("String", "MAPS_API_KEY", MAPS_API_KEY)
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

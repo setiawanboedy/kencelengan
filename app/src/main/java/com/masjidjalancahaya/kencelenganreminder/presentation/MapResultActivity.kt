@@ -114,9 +114,7 @@ class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupSearchAddress(){
-        if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, "AIzaSyBBSm8Dk3peSVXFiXbBPn3P2kiGZF-55yk") // Replace with your API key
-        }
+
         val autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_search)
                 as AutocompleteSupportFragment
 
