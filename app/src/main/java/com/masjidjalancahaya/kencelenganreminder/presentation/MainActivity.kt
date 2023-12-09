@@ -16,12 +16,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.R
@@ -32,10 +30,7 @@ import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
 import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
 import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
 import com.masjidjalancahaya.kencelenganreminder.utils.calculateDistance
-import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,11 +65,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
-        if (Build.VERSION.SDK_INT >= 33) {
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-
-        permissionLocationGranted()
+        permissionGranted()
         viewModel.getKencelengans()
         initDataKencel()
         setupViewAndClick()
@@ -82,11 +73,12 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
 
     }
 
-    private fun permissionLocationGranted(){
+    private fun permissionGranted(){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         if (ContextCompat.checkSelfPermission(
                 this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
+
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -96,6 +88,19 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             }
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        }
+
+        if (ContextCompat.checkSelfPermission(
+            this.applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED)
+        {
+            return
+        }else{
+            if (Build.VERSION.SDK_INT >= 33) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 
@@ -106,6 +111,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         }
 
         binding.swipeRefresh.setOnRefreshListener {
+            permissionGranted()
             viewModel.swipeRefreshKencel()
         }
     }
@@ -156,6 +162,8 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             }
             val itemsCombine = listBlue+listGrey
             kencelengAdapter.submitList(itemsCombine)
+        }else{
+            kencelengAdapter.submitList(items)
         }
     }
 
