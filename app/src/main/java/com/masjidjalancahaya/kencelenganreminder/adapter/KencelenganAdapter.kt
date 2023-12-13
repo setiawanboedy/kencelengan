@@ -10,10 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ItemDonaturBinding
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.repository.Repository
+import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
 import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import javax.inject.Inject
+
 
 class KencelenganAdapter(private val context: Context, private val listener: OnItemAdapterListener): ListAdapter<KencelenganModel, KencelenganAdapter.ViewHolder>(differCallback) {
+
     companion object{
         val differCallback = object : DiffUtil.ItemCallback<KencelenganModel>(){
             override fun areItemsTheSame(
@@ -29,8 +40,11 @@ class KencelenganAdapter(private val context: Context, private val listener: OnI
         }
     }
 
+
     inner class ViewHolder(private val binding: ItemDonaturBinding): RecyclerView.ViewHolder(binding.root) {
+
         fun bind(data: KencelenganModel, listener: OnItemAdapterListener){
+
 
             with(binding){
                 tvName.text = data.name
@@ -39,7 +53,10 @@ class KencelenganAdapter(private val context: Context, private val listener: OnI
 
                 if (data.isBlue!!){
                     val cyanColor = ContextCompat.getColor(context, R.color.cyan)
-                    binding.itemDonatur.setCardBackgroundColor(cyanColor)
+                    itemDonatur.setCardBackgroundColor(cyanColor)
+                }else{
+                    val cyanColor = ContextCompat.getColor(context, R.color.grey)
+                    itemDonatur.setCardBackgroundColor(cyanColor)
                 }
 
                 selected.setOnClickListener {

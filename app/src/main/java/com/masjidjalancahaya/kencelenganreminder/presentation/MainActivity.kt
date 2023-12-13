@@ -12,8 +12,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -48,16 +50,19 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
 
     private val requestPermissionLauncher =
         registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-
-                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permission rejected", Toast.LENGTH_SHORT).show()
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false ->{
+                    Toast.makeText(this, "Location Granted", Toast.LENGTH_SHORT).show()
+                }
+                permissions[Manifest.permission.POST_NOTIFICATIONS] ?: false -> {
+                    Toast.makeText(this, "Notification Granted", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -66,44 +71,51 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
         permissionGranted()
-        viewModel.getKencelengans()
+        if (permissionGranted()){
+            viewModel.swipeRefreshKencel()
+        }else{
+            viewModel.getKencelengans()
+        }
         initDataKencel()
         setupViewAndClick()
         initRecyclerView()
 
     }
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
-    private fun permissionGranted(){
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun permissionGranted(): Boolean{
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ContextCompat.checkSelfPermission(
-                this.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION
-
-            ) == PackageManager.PERMISSION_GRANTED
+        if (
+            checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.POST_NOTIFICATIONS)
         ) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 location?.let {
                     currentLatLng = LatLng(it.latitude, it.longitude)
                 }
             }
+            return true
         } else {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            )
+            return false
         }
 
-        if (ContextCompat.checkSelfPermission(
-            this.applicationContext,
-                Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED)
-        {
-            return
-        }else{
-            if (Build.VERSION.SDK_INT >= 33) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun setupViewAndClick(){
         binding.floatingActionButton.setOnClickListener {
             val moveIntent = Intent(this@MainActivity, AddActivity::class.java)
@@ -235,6 +247,14 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             Snackbar.make(binding.root, "Hapus data berhasil", Snackbar.LENGTH_LONG).show()
         }else
             Snackbar.make(binding.root, "Hapus data gagal", Snackbar.LENGTH_LONG).show()
+    }
+
+    @Deprecated("Deprecated in Java",
+        ReplaceWith("super.onBackPressed()", "androidx.appcompat.app.AppCompatActivity")
+    )
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
     }
 
 }

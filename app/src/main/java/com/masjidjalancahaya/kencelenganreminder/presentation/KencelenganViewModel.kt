@@ -1,5 +1,6 @@
 package com.masjidjalancahaya.kencelenganreminder.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -62,11 +63,11 @@ class KencelenganViewModel @Inject constructor(
     }
 
     fun getKencelengans() {
-
         viewModelScope.launch {
             val list = repository.getAllKencelengan()
             list.collect{
-                _allKencelengan.postValue(it)
+                _allKencelengan.value =it
+
             }
         }
 
@@ -78,12 +79,15 @@ class KencelenganViewModel @Inject constructor(
             val list = repository.getAllKencelengan()
             val dateTimeNow = LocalDateTime.now()
             list.collect{
-                _allKencelengan.postValue(it)
+                _allKencelengan.value = it
                 it.data?.forEach {data ->
                     val specificDateTime = dateTimeConversion.zonedEpochMilliToLocalDateTime(data.startDateAndTime!!)
 
                     if (specificDateTime.isBefore(dateTimeNow)){
                         val update = data.copy(isBlue = true)
+                        repository.updateKencelengan(update).collect()
+                    }else{
+                        val update = data.copy(isBlue = false)
                         repository.updateKencelengan(update).collect()
                     }
                 }

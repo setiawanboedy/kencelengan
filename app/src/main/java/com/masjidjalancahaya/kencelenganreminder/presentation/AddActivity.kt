@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.R
@@ -24,12 +25,10 @@ import com.masjidjalancahaya.kencelenganreminder.utils.convertLatLngToAddress
 import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
 import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToTimeString
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -56,7 +55,6 @@ class AddActivity : AppCompatActivity(),
     private lateinit var binding: ActivityAddBinding
     private val viewModel: KencelenganViewModel by viewModels()
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -107,16 +105,15 @@ class AddActivity : AppCompatActivity(),
             viewModel.setStartDate(localDate!!)
             viewModel.setStartTime(localTime!!)
             latLang = location
+            isBlue = kencel.isBlue
 
             binding.edtName.setText(kencel.name)
             binding.edtTelp.setText(kencel.nomor.toString())
             binding.edtAddress.setText(kencel.address)
-            binding.btnSwitch.isChecked = kencel.isBlue!!
             binding.locationAddress.text = latLng.convertLatLngToAddress(this)
             binding.tvDate.text = localDateTime.dateTimeDoubleToDateString()
             binding.tvTime.text = localDateTime.dateTimeDoubleToTimeString()
 
-            binding.btnSwitch.visibility = View.VISIBLE
             binding.btnUpdate.visibility = View.VISIBLE
             binding.btnAdd.visibility = View.INVISIBLE
             binding.btnUpdate.setOnClickListener {
@@ -141,7 +138,7 @@ class AddActivity : AppCompatActivity(),
     private fun onCreateKencel(isCreated: Boolean){
         if (isCreated) {
             Snackbar.make(binding.root, "Tambah data berhasil", Snackbar.LENGTH_LONG).show()
-            resetForm()
+            back()
         }else
             Snackbar.make(binding.root, "Tambah data gagal", Snackbar.LENGTH_LONG).show()
     }
@@ -149,7 +146,7 @@ class AddActivity : AppCompatActivity(),
     private fun onUpdateKencel(isUpdate: Boolean){
         if (isUpdate) {
             Snackbar.make(binding.root, "Update data berhasil", Snackbar.LENGTH_LONG).show()
-
+            back()
         }else
             Snackbar.make(binding.root, "Update data gagal", Snackbar.LENGTH_LONG).show()
     }
@@ -263,17 +260,15 @@ class AddActivity : AppCompatActivity(),
             timePickerFragmentOne.show(supportFragmentManager, TIME_PICKER_ONCE_TAG)
         }
 
-        binding.btnSwitch.setOnCheckedChangeListener { _, isChecked ->
-            isBlue = isChecked
-        }
     }
 
-    override fun onOptionsItemSelected( item: MenuItem): Boolean {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
                 val moveIntent = Intent(this@AddActivity, MainActivity::class.java)
                 startActivity(moveIntent)
-                finish()
+
                 return true
             }
         }
@@ -298,5 +293,12 @@ class AddActivity : AppCompatActivity(),
         binding.tvTime.text = dateFormat.format(calendar.time)
     }
 
+    private fun back(){
+        lifecycleScope.launch {
+            delay(500)
+            val moveIntent = Intent(this@AddActivity, MainActivity::class.java)
+            startActivity(moveIntent)
 
+        }
+    }
 }
