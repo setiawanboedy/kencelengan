@@ -51,15 +51,26 @@ class KencelenganViewModel @Inject constructor(
     val isUpdateKencelengan: LiveData<ResourceState<Boolean>> get() = _updateKencelengan
 
     private val _selectedStartDate = MutableStateFlow(LocalDate.now())
-    val selectedStartDate = _selectedStartDate.asStateFlow()
+    private val selectedStartDate = _selectedStartDate.asStateFlow()
     fun setStartDate(selectedStartDate: LocalDate) {
         _selectedStartDate.value = selectedStartDate
     }
 
     private val _selectedStartTime = MutableStateFlow(LocalTime.now())
-    val selectedStartTime = _selectedStartTime.asStateFlow()
+    private val selectedStartTime = _selectedStartTime.asStateFlow()
     fun setStartTime(selectedStartTime: LocalTime) {
         _selectedStartTime.value = selectedStartTime
+    }
+
+    private var _uiState = MutableLiveData(UiState())
+    val uiState: LiveData<UiState> = _uiState
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            workManager.apply {
+                enqueue(syncFullKencelWorkRequest)
+            }
+        }
     }
 
     fun getKencelengans() {
@@ -152,11 +163,21 @@ class KencelenganViewModel @Inject constructor(
                     .build()
             ).build()
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            workManager.apply {
-                enqueue(syncFullKencelWorkRequest)
-            }
-        }
+
+    fun setDonateName(name: String){
+        _uiState.value = _uiState.value?.copy(
+            donateName = name
+        )
     }
+    fun setNoHp(phone: Int){
+        _uiState.value = _uiState.value?.copy(
+            noHp = phone
+        )
+    }
+
+    data class UiState(
+        val donateName: String? = null,
+        val noHp: Int? = null
+    )
+
 }
