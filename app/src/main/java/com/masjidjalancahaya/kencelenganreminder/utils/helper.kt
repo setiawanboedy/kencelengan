@@ -6,8 +6,11 @@ import android.location.Geocoder
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import java.io.IOException
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -27,16 +30,14 @@ fun LatLng.convertLatLngToAddress(context: Context): String? {
     return null
 }
 
-fun LocalDateTime.dateTimeDoubleToDateString():String {
-    val date = Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
-    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-    return dateFormat.format(date)
+fun LocalDate.dateTimeDoubleToDateString():String {
+    val dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
+    return this.format(dateFormat)
 }
 
-fun LocalDateTime.dateTimeDoubleToTimeString(): String {
-    val time = Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
-    val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return dateFormat.format(time)
+fun LocalTime.dateTimeDoubleToTimeString(): String {
+    val dateFormat = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
+    return this.format(dateFormat)
 }
 
 fun LatLng.calculateDistance(start: LatLng): Double {

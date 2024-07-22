@@ -8,10 +8,10 @@
     <string name="nomor_hp">Nomor Hp</string>
     <string name="edit_name">Edit Name</string>
     <string name="edit_telpon">Edit Telpon</string>
-    <string name="tambah">Tambah</string>
+    <string name="tambah">Simpan</string>
     <string name="alamat_lengkap">Alamat Lengkap</string>
     <string name="alamat">Alamat</string>
-    <string name="kembali">Kembali</string>
+    <string name="kembali">Batal</string>
     <string name="setting">Setting</string>
     <string name="mulai_timer">Mulai Timer</string>
     <string name="batalkan_timer">Batalkan Timer</string>

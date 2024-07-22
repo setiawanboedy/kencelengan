@@ -8,6 +8,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -129,6 +130,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
     }
     private fun initDataKencel(){
         viewModel.allKencelengan.observe(this) {items->
+
             when(items){
                 is ResourceState.Loading -> {
                     binding.pbLoading.visibility = View.VISIBLE
@@ -142,20 +144,6 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
                     binding.pbLoading.visibility = View.GONE
                     binding.swipeRefresh.isRefreshing = false
 
-                }
-            }
-
-        }
-
-        viewModel.isDeleteKencelengan.observe(this){isDelete ->
-            when(isDelete){
-                is ResourceState.Loading -> {
-                }
-                is ResourceState.Success ->{
-                    onDeleteKencel(isDelete.data ?: false)
-                    viewModel.getKencelengans()
-                }
-                else -> {
                 }
             }
 
@@ -187,22 +175,6 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_settings -> {
-//            val moveIntent = Intent(this@MainActivity, SettingActivity::class.java)
-//            startActivity(moveIntent)
-            true
-        }
-
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onPrimaryClick(item: KencelenganModel) {
         val moveWithObjectIntent = Intent(this@MainActivity, AddActivity::class.java)
         moveWithObjectIntent.putExtra(AddActivity.DATA_KEY, item)
@@ -216,38 +188,8 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
             startActivity(mapIntent)
     }
 
-    override fun onLongPressedClick(item: KencelenganModel) {
-        showDeleteDialog(item.id)
-    }
+    override fun onLongPressedClick(item: KencelenganModel) {}
 
-    private fun showDeleteDialog(id: String?) {
-        val builder = AlertDialog.Builder(this)
-
-        builder.setTitle("Hapus Kencelengan")
-        builder.setMessage("Apakah Anda yakin akan menghapus kencelengan ini?")
-
-        // Set up the delete button
-        builder.setPositiveButton("Hapus") { _, _ ->
-            if (id != null){
-                viewModel.deleteKencelengan(id)
-            }
-        }
-
-        // Set up the cancel button
-        builder.setNegativeButton("Batal") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        // Create and show the dialog
-        builder.create().show()
-    }
-
-    private fun onDeleteKencel(isDelete: Boolean){
-        if (isDelete) {
-            Snackbar.make(binding.root, "Hapus data berhasil", Snackbar.LENGTH_LONG).show()
-        }else
-            Snackbar.make(binding.root, "Hapus data gagal", Snackbar.LENGTH_LONG).show()
-    }
 
     @Deprecated("Deprecated in Java",
         ReplaceWith("super.onBackPressed()", "androidx.appcompat.app.AppCompatActivity")

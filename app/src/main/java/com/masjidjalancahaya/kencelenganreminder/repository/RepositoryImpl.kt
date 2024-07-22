@@ -1,6 +1,7 @@
 package com.masjidjalancahaya.kencelenganreminder.repository
 
 
+import android.util.Log
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
 import com.masjidjalancahaya.kencelenganreminder.data.source.remote.FirebaseService
 import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
@@ -60,16 +61,11 @@ class RepositoryImpl @Inject constructor(
             val getListKencelengan = service.getAllKencelengan().await()
 
             val listKencelengan = mutableListOf<KencelenganModel>()
-
-            if(getListKencelengan.documents.size != 0){
-                listKencelengan.clear()
-                for (kencel in getListKencelengan.documents){
+            if (getListKencelengan.documents.isNotEmpty()) {
+                for (kencel in getListKencelengan.documents) {
                     val kenceleng = kencel.getFromNetwork()
                     listKencelengan.add(kenceleng)
                 }
-            }
-            listKencelengan.forEach{ item ->
-                scheduleNotification(item)
             }
             emit(ResourceState.Success(listKencelengan))
         }catch (e: Exception){

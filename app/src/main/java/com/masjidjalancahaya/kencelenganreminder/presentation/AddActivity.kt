@@ -1,22 +1,23 @@
 package com.masjidjalancahaya.kencelenganreminder.presentation
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityAddBinding
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
 import com.masjidjalancahaya.kencelenganreminder.model.LatLang
 import com.masjidjalancahaya.kencelenganreminder.presentation.utils.DatePickerFragment
 import com.masjidjalancahaya.kencelenganreminder.presentation.utils.TimePickerFragment
@@ -25,10 +26,6 @@ import com.masjidjalancahaya.kencelenganreminder.utils.convertLatLngToAddress
 import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
 import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToTimeString
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
 import java.util.Locale
 import javax.inject.Inject
 
@@ -36,7 +33,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AddActivity : AppCompatActivity(),
     DatePickerFragment.DialogDateListener,
-    TimePickerFragment.DialogTimeListener {
+    TimePickerFragment.DialogTimeListener{
 
 
     companion object{
@@ -48,12 +45,10 @@ class AddActivity : AppCompatActivity(),
     @Inject
     lateinit var dateTimeConversion: DateTimeConversion
 
-    private var latLang: LatLang? = null
-    private var localTime: LocalTime? = null
-    private var localDate: LocalDate? = null
+    private var itemId: String? = null
     private var isBlue: Boolean? = false
     private lateinit var binding: ActivityAddBinding
-    private val viewModel: KencelenganViewModel by viewModels()
+    private val viewModel: AddViewModel by viewModels()
 
     private val resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -67,9 +62,12 @@ class AddActivity : AppCompatActivity(),
             }
             if (location != null){
                 val latLng = LatLng(location.lat, location.lang)
-                latLang = location
+                viewModel.setLatLng(latLng = latLng)
                 val address = latLng.convertLatLngToAddress(this)
-                binding.locationAddress.text = address
+                if (address != null) {
+                    binding.locationAddress.text = address
+                    viewModel.setAddress(address = address)
+                }
             }
         }
     }
@@ -84,154 +82,55 @@ class AddActivity : AppCompatActivity(),
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
-        getDataFromActivity()
-        initDataProduct()
+        viewInputForm()
         setupViewsAndOnClickListeners()
     }
 
-    private fun getDataFromActivity(){
-        val kencel = if (Build.VERSION.SDK_INT >= 33) {
-            intent.getParcelableExtra(DATA_KEY, KencelenganModel::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(DATA_KEY)
-        }
-        if (kencel != null) {
-            val latLng = LatLng(kencel.lat!!, kencel.lang!!)
-            val location = LatLang(kencel.lat!!, kencel.lang!!)
-            val localDateTime = dateTimeConversion.zonedEpochMilliToLocalDateTime(kencel.startDateAndTime!!)
-            localDate = localDateTime.toLocalDate()
-            localTime = localDateTime.toLocalTime()
-            viewModel.setStartDate(localDate!!)
-            viewModel.setStartTime(localTime!!)
-            latLang = location
-            isBlue = kencel.isBlue
 
-            binding.edtName.setText(kencel.name)
-            binding.edtTelp.setText(kencel.nomor.toString())
-            binding.edtAddress.setText(kencel.address)
-            binding.locationAddress.text = latLng.convertLatLngToAddress(this)
-            binding.tvDate.text = localDateTime.dateTimeDoubleToDateString()
-            binding.tvTime.text = localDateTime.dateTimeDoubleToTimeString()
-
-            binding.btnUpdate.visibility = View.VISIBLE
-            binding.btnAdd.visibility = View.INVISIBLE
-            binding.btnUpdate.setOnClickListener {
-
-                updateKencel(kencel)
-            }
-        }
-    }
-
-
-    private fun initDataProduct(){
-        viewModel.isCreateKencelengan.observe(this){
-            it.data?.let { it1 -> onCreateKencel(it1) }
-        }
-
-        viewModel.isUpdateKencelengan.observe(this){
-            it.data?.let { it1 -> onUpdateKencel(it1) }
-        }
-
-    }
-
-    private fun onCreateKencel(isCreated: Boolean){
-        if (isCreated) {
-            Snackbar.make(binding.root, "Tambah data berhasil", Snackbar.LENGTH_LONG).show()
-            back()
-        }else
-            Snackbar.make(binding.root, "Tambah data gagal", Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun onUpdateKencel(isUpdate: Boolean){
-        if (isUpdate) {
-            Snackbar.make(binding.root, "Update data berhasil", Snackbar.LENGTH_LONG).show()
-            back()
-        }else
-            Snackbar.make(binding.root, "Update data gagal", Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun updateKencel(kencelenganModel: KencelenganModel){
-        val validationForm = validationForm()
-        if (!validationForm){
-            val kencel = KencelenganModel(
-                id = kencelenganModel.id,
-                name = binding.edtName.text.toString(),
-                nomor = binding.edtTelp.text.toString().toLong(),
-                address = binding.edtAddress.text.toString(),
-                isBlue = isBlue,
-                startDateAndTime = kencelenganModel.startDateAndTime,
-                lat = latLang!!.lat,
-                lang = latLang!!.lang
-            )
-
-            viewModel.updateKencelengan(kencel)
-        }
-    }
-    private fun createKencel(){
-        val validationForm = validationForm()
-        if (!validationForm){
-            val kencel = KencelenganModel(
-                name = binding.edtName.text.toString(),
-                nomor = binding.edtTelp.text.toString().toLong(),
-                address = binding.edtAddress.text.toString(),
-                lat = latLang!!.lat,
-                lang = latLang!!.lang
-            )
-
-            viewModel.createKencelengan(kencel)
-        }
-    }
-
-    private fun validationForm(): Boolean{
-        var isEmptyFields = false
-        binding.apply {
-            val inputName = edtName.text.toString().trim()
-            val inputNomer = edtTelp.text.toString().trim()
-            val inputAddress = edtAddress.text.toString().trim()
-
-
-            if (inputName.isEmpty()) {
-                isEmptyFields = true
-                edtName.error = "Field ini tidak boleh kosong"
-            }
-            if (inputNomer.isEmpty()) {
-                isEmptyFields = true
-                edtTelp.error = "Field ini tidak boleh kosong"
-            }
-            if (inputAddress.isEmpty()) {
-                isEmptyFields = true
-                edtAddress.error = "Field ini tidak boleh kosong"
-            }
-            if (latLang == null){
-                isEmptyFields = true
-                Snackbar.make(binding.root, "Pilih alamat lebih dahulu", Snackbar.LENGTH_LONG).show()
-            }
-            if (localDate == null){
-                isEmptyFields = true
-                Snackbar.make(binding.root, "Atur tanggal dulu", Snackbar.LENGTH_LONG).show()
-            }
-            if (localTime == null){
-                isEmptyFields = true
-                Snackbar.make(binding.root, "Atur waktu dulu", Snackbar.LENGTH_LONG).show()
+    private fun viewInputForm(){
+        viewModel.uiState.observe(this) { state ->
+            state?.let {
+                binding.btnAdd.isEnabled = it.isDataValid
             }
         }
 
-        return isEmptyFields
+        binding.edtName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.setDonateName(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.edtTelp.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s != null){
+                viewModel.setNoHp(s.toString())
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
     }
 
-    private fun resetForm(){
-        binding.edtName.text?.clear()
-        binding.edtTelp.text?.clear()
-        binding.edtAddress.text?.clear()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun setupViewsAndOnClickListeners(){
+        viewModel.uiState.observe(this) { state ->
+            if (state != null){
+                itemId = state.id
+                if (binding.edtName.text.toString() != state.donateName){
+                    binding.edtName.setText(state.donateName)
+                }
+                if (binding.edtTelp.text.toString() != state.phone){
+                    binding.edtTelp.setText(state.phone)
+                }
+                binding.tvDate.text = state.startDate?.dateTimeDoubleToDateString() ?: "Atur Tanggal"
+                binding.tvTime.text = state.startTime?.dateTimeDoubleToTimeString() ?: "Atur Waktu"
+                binding.locationAddress.text = state.latLng?.convertLatLngToAddress(this) ?: "Atur Lokasi"
 
-        binding.btnAdd.setOnClickListener {
-
-            createKencel()
+                if (state.redirect){
+                    redirectBack()
+                }
+            }
         }
 
         binding.btnBack.setOnClickListener {
@@ -246,7 +145,6 @@ class AddActivity : AppCompatActivity(),
 
         binding.pickDate.setOnClickListener {
             val datePickerFragment = DatePickerFragment { date ->
-                localDate = date
                 viewModel.setStartDate(date)
 
             }
@@ -254,12 +152,30 @@ class AddActivity : AppCompatActivity(),
         }
         binding.pickTime.setOnClickListener {
             val timePickerFragmentOne = TimePickerFragment{ time ->
-                localTime = time
                 viewModel.setStartTime(time)
             }
             timePickerFragmentOne.show(supportFragmentManager, TIME_PICKER_ONCE_TAG)
         }
 
+        binding.btnAdd.setOnClickListener {
+            viewModel.submit()
+        }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val shouldHideIcon = checkCondition()
+        menu?.findItem(R.id.action_delete)?.isVisible = !shouldHideIcon
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun checkCondition(): Boolean {
+        return itemId == null
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -271,12 +187,17 @@ class AddActivity : AppCompatActivity(),
 
                 return true
             }
+            R.id.action_delete -> {
+                if (itemId != null){
+                    showDeleteDialog(itemId)
+                }
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onDialogDateSet(tag: String?, year: Int, month: Int, dayOfMonth: Int) {
-        // Siapkan date formatter-nya terlebih dahulu
         val calendar = Calendar.getInstance()
         calendar.set(year, month, dayOfMonth)
         val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -293,12 +214,23 @@ class AddActivity : AppCompatActivity(),
         binding.tvTime.text = dateFormat.format(calendar.time)
     }
 
-    private fun back(){
-        lifecycleScope.launch {
-            delay(500)
-            val moveIntent = Intent(this@AddActivity, MainActivity::class.java)
-            startActivity(moveIntent)
+    private fun redirectBack(){
+        val moveWithObjectIntent = Intent(this, MainActivity::class.java)
+        startActivity(moveWithObjectIntent)
+    }
 
+    private fun showDeleteDialog(id: String?) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Hapus Kencelengan")
+        builder.setMessage("Apakah Anda yakin akan menghapus kencelengan ini?")
+        builder.setPositiveButton("Hapus") { _, _ ->
+            if (id != null){
+                viewModel.deleteItem(id)
+            }
         }
+        builder.setNegativeButton("Batal") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 }
