@@ -28,4 +28,10 @@
     <string name="kencel">Kencel</string>
     <!--notification messages -->
     <string name="used_for_string_notification">Used for %1$s notifications</string>
+    <string name="google_icon">google icon</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="google_to_login">Mohon login untuk melanjutkan</string>
+    <string name="my_saving">KencelenganKu</string>
+    <string name="refresh">Refresh</string>
+    <string name="logout">Logout</string>
 </resources>

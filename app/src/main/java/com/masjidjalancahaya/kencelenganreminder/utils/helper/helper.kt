@@ -1,17 +1,13 @@
-package com.masjidjalancahaya.kencelenganreminder.utils
+package com.masjidjalancahaya.kencelenganreminder.utils.helper
 
 import android.content.Context
-import android.icu.text.SimpleDateFormat
 import android.location.Geocoder
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import java.io.IOException
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.Locale
 
 fun LatLng.convertLatLngToAddress(context: Context): String? {

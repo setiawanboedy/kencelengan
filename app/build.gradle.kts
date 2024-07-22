@@ -57,15 +57,21 @@ android {
 
 dependencies {
 
+    //noinspection GradleDependency
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("com.google.firebase:firebase-firestore:24.9.1")
+    implementation("androidx.activity:activity-ktx:1.9.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // firebase
+    implementation("com.google.firebase:firebase-firestore:24.9.1")
+    implementation("com.google.firebase:firebase-auth-ktx:22.1.1")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // work manager
     implementation("androidx.work:work-runtime:2.8.1")

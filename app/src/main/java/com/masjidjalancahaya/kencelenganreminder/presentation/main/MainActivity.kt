@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.presentation
+package com.masjidjalancahaya.kencelenganreminder.presentation.main
 
 import android.Manifest
 import android.app.AlertDialog
@@ -8,12 +8,10 @@ import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -24,15 +22,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.adapter.KencelenganAdapter
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMainBinding
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
-import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.presentation.add.AddActivity
+import com.masjidjalancahaya.kencelenganreminder.presentation.auth.AuthActivity
+import com.masjidjalancahaya.kencelenganreminder.presentation.auth.AuthState
+import com.masjidjalancahaya.kencelenganreminder.presentation.auth.AuthViewModel
+import com.masjidjalancahaya.kencelenganreminder.utils.conversion.DateTimeConversion
 import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
-import com.masjidjalancahaya.kencelenganreminder.utils.calculateDistance
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.calculateDistance
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: KencelenganViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
     private lateinit var kencelengAdapter: KencelenganAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLatLng: LatLng? = null
@@ -77,11 +79,28 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         }else{
             viewModel.getKencelengans()
         }
+        setupLogout()
         initDataKencel()
         setupViewAndClick()
         initRecyclerView()
 
     }
+    private fun setupLogout(){
+        authViewModel.authState.observe(this){ isAuth ->
+            when(isAuth){
+                is AuthState.Unauthenticated -> {
+                    val intent = Intent(this, AuthActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                is AuthState.Authenticated -> {}
+                is AuthState.Error -> {
+                    Toast.makeText(this, isAuth.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun checkPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
@@ -197,6 +216,39 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
     override fun onBackPressed() {
         super.onBackPressed()
         finishAffinity()
+    }
+
+    private fun showLogoutDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Logout Akun")
+        builder.setMessage("Apakah Anda yakin akan logout ?")
+        builder.setPositiveButton("Hapus") { _, _ ->
+            authViewModel.logout()
+        }
+        builder.setNegativeButton("Batal") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_refresh -> {
+
+                return true
+            }
+            R.id.action_logout -> {
+                showLogoutDialog()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

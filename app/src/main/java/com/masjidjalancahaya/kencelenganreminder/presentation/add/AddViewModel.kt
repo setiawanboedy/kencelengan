@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.presentation
+package com.masjidjalancahaya.kencelenganreminder.presentation.add
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
-import com.masjidjalancahaya.kencelenganreminder.presentation.AddActivity.Companion.DATA_KEY
-import com.masjidjalancahaya.kencelenganreminder.repository.Repository
-import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
-import com.masjidjalancahaya.kencelenganreminder.utils.ReminderTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.presentation.add.AddActivity.Companion.DATA_KEY
+import com.masjidjalancahaya.kencelenganreminder.data.repository.Repository
+import com.masjidjalancahaya.kencelenganreminder.utils.conversion.DateTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.utils.conversion.ReminderTimeConversion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

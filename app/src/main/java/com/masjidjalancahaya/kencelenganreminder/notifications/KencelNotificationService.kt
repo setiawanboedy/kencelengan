@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.masjidjalancahaya.kencelenganreminder.R
-import com.masjidjalancahaya.kencelenganreminder.model.KencelNotifInfo
-import com.masjidjalancahaya.kencelenganreminder.presentation.MainActivity
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelNotifInfo
+import com.masjidjalancahaya.kencelenganreminder.presentation.main.MainActivity
 
 class KencelNotificationService(
     private val context: Context

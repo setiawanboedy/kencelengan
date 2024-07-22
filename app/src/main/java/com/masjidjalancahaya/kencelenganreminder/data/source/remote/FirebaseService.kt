@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
 import timber.log.Timber
 import javax.inject.Inject
 

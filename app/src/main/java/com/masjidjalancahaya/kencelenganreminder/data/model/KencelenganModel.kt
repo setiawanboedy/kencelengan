@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.model
+package com.masjidjalancahaya.kencelenganreminder.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

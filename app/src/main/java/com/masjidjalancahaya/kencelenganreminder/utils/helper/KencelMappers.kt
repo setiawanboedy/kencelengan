@@ -1,12 +1,11 @@
-package com.masjidjalancahaya.kencelenganreminder.utils
+package com.masjidjalancahaya.kencelenganreminder.utils.helper
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.masjidjalancahaya.kencelenganreminder.R
-import com.masjidjalancahaya.kencelenganreminder.model.KencelNotifInfo
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelNotifInfo
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
 import com.masjidjalancahaya.kencelenganreminder.notifications.KencelNotificationService
 
-fun KencelenganModel.toNotifInfo(): KencelNotifInfo{
+fun KencelenganModel.toNotifInfo(): KencelNotifInfo {
 
 
     val channel = KencelNotificationService.REMINDER_CHANNEL_ID
@@ -21,7 +20,7 @@ fun KencelenganModel.toNotifInfo(): KencelNotifInfo{
     )
 }
 
-fun DocumentSnapshot.getFromNetwork(): KencelenganModel{
+fun DocumentSnapshot.getFromNetwork(): KencelenganModel {
     return KencelenganModel(
         id = this.get("id").toString(),
         name = this.get("name").toString(),

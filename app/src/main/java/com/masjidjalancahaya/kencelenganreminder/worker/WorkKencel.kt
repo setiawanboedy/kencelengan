@@ -8,7 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.masjidjalancahaya.kencelenganreminder.repository.Repository
+import com.masjidjalancahaya.kencelenganreminder.data.repository.Repository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.collectLatest

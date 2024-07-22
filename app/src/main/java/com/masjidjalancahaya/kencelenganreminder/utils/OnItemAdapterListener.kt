@@ -1,6 +1,6 @@
 package com.masjidjalancahaya.kencelenganreminder.utils
 
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
 
 interface OnItemAdapterListener {
     fun onPrimaryClick(item: KencelenganModel)

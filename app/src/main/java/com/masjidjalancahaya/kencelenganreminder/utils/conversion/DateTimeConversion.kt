@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.utils
+package com.masjidjalancahaya.kencelenganreminder.utils.conversion
 
 import java.time.LocalDateTime
 

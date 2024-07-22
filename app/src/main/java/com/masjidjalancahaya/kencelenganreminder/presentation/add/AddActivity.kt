@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.presentation
+package com.masjidjalancahaya.kencelenganreminder.presentation.add
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -10,7 +10,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -18,13 +17,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.model.LatLng
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityAddBinding
-import com.masjidjalancahaya.kencelenganreminder.model.LatLang
+import com.masjidjalancahaya.kencelenganreminder.data.model.LatLang
+import com.masjidjalancahaya.kencelenganreminder.presentation.main.MainActivity
 import com.masjidjalancahaya.kencelenganreminder.presentation.utils.DatePickerFragment
 import com.masjidjalancahaya.kencelenganreminder.presentation.utils.TimePickerFragment
-import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
-import com.masjidjalancahaya.kencelenganreminder.utils.convertLatLngToAddress
-import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToDateString
-import com.masjidjalancahaya.kencelenganreminder.utils.dateTimeDoubleToTimeString
+import com.masjidjalancahaya.kencelenganreminder.utils.conversion.DateTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.convertLatLngToAddress
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.dateTimeDoubleToDateString
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.dateTimeDoubleToTimeString
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import javax.inject.Inject

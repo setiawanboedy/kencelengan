@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.utils
+package com.masjidjalancahaya.kencelenganreminder.utils.helper
 
 import android.annotation.SuppressLint
 import android.content.Context

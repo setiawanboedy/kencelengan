@@ -1,24 +1,42 @@
-package com.masjidjalancahaya.kencelenganreminder.repository
+package com.masjidjalancahaya.kencelenganreminder.data.repository
 
 
-import android.util.Log
+import com.google.firebase.auth.GoogleAuthProvider
 import com.masjidjalancahaya.kencelenganreminder.core.ResourceState
 import com.masjidjalancahaya.kencelenganreminder.data.source.remote.FirebaseService
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
+import com.masjidjalancahaya.kencelenganreminder.data.source.remote.FirebaseAuthService
 import com.masjidjalancahaya.kencelenganreminder.notifications.KencelNotificationScheduler
-import com.masjidjalancahaya.kencelenganreminder.utils.getFromNetwork
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.getFromNetwork
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import timber.log.Timber
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
     private val service: FirebaseService,
+    private val serviceAuth: FirebaseAuthService,
     private val scheduler: KencelNotificationScheduler,
-): Repository{
+): Repository {
+    override fun signWithGoogle(idToken: String, callback: (Boolean) -> Unit) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        serviceAuth.authWithGoogle(credential).addOnCompleteListener { task ->
+            callback(task.isSuccessful)
+        }
+    }
+
+    override fun isAuthLoginGoogle(): Boolean {
+        return serviceAuth.isAuthLogin()
+    }
+
+    override fun signOut(callback: (Boolean) -> Unit) {
+        if (serviceAuth.signOut()){
+            callback(true)
+        }else{
+            callback(false)
+        }
+    }
+
     override suspend fun createKencelengan(kencelenganModel: KencelenganModel): Flow<ResourceState<Boolean>> = flow {
         emit(ResourceState.Loading())
         try {

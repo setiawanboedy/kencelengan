@@ -9,18 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ItemDonaturBinding
-import com.masjidjalancahaya.kencelenganreminder.model.KencelenganModel
-import com.masjidjalancahaya.kencelenganreminder.repository.Repository
-import com.masjidjalancahaya.kencelenganreminder.utils.DateTimeConversion
+import com.masjidjalancahaya.kencelenganreminder.data.model.KencelenganModel
 import com.masjidjalancahaya.kencelenganreminder.utils.OnItemAdapterListener
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.time.LocalDateTime
-import javax.inject.Inject
 
 
 class KencelenganAdapter(private val context: Context, private val listener: OnItemAdapterListener): ListAdapter<KencelenganModel, KencelenganAdapter.ViewHolder>(differCallback) {

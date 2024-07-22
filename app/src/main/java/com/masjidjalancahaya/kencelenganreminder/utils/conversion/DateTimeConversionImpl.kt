@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.utils
+package com.masjidjalancahaya.kencelenganreminder.utils.conversion
 
 import android.icu.util.TimeZone
 import java.time.Instant

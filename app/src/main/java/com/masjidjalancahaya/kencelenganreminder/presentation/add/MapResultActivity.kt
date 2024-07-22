@@ -1,4 +1,4 @@
-package com.masjidjalancahaya.kencelenganreminder.presentation
+package com.masjidjalancahaya.kencelenganreminder.presentation.add
 
 import android.Manifest
 import android.content.Intent
@@ -20,15 +20,14 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.masjidjalancahaya.kencelenganreminder.R
 import com.masjidjalancahaya.kencelenganreminder.databinding.ActivityMapResultBinding
-import com.masjidjalancahaya.kencelenganreminder.model.LatLang
-import com.masjidjalancahaya.kencelenganreminder.utils.WindowMapAdapter
-import com.masjidjalancahaya.kencelenganreminder.utils.convertLatLngToAddress
+import com.masjidjalancahaya.kencelenganreminder.data.model.LatLang
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.WindowMapAdapter
+import com.masjidjalancahaya.kencelenganreminder.utils.helper.convertLatLngToAddress
 import timber.log.Timber
 
 class MapResultActivity : AppCompatActivity(), OnMapReadyCallback {
