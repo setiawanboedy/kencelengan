@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity(), OnItemAdapterListener {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Logout Akun")
         builder.setMessage("Apakah Anda yakin akan logout ?")
-        builder.setPositiveButton("Hapus") { _, _ ->
+        builder.setPositiveButton("Logout") { _, _ ->
             authViewModel.logout()
         }
         builder.setNegativeButton("Batal") { dialog, _ ->
