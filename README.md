@@ -81,4 +81,4 @@ The KencelenganApp project uses many popular libraries and tools in the Android 
 * [Google MAPS](https://developers.google.com/maps/documentation/android-sdk/start) - Create an Android app that displays a map by using the Google Maps Views template for Android.
 
 # :memo: Authors :memo:
-- [@stevdza-san](https://github.com/setiawanboedy)
+- [@setiawanboedy](https://github.com/setiawanboedy)
