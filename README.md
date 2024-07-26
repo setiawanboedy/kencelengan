@@ -7,7 +7,6 @@
 <br />
 
 
-# :demo: **Screenshots** :demo:  
 [Screenshots](#camera_flash-screenshots-camera_flash) ~
 [Deployment](#arrow_lower_right-deployment-arrow_lower_right) ~
 [Architecture](#hammer_and_wrench-architecture-hammer_and_wrench) ~
@@ -21,7 +20,7 @@ KencelenganApp allows foundation institutions to write and save data entries wit
 KencelenganApp is a complete charity project written in Kotlin and powered by Android Jetpack. It is a Single Module Project. The Data part is handled by a Firebase and Location coordinate with Google Map Api.
 
 # :camera_flash: **Screenshots** :camera_flash:
-
+# :demo: **** :demo:
 KencelenganApp follows the latest Material 3 guidelines for a visually appealing and a consistent UI.
 
 <p align="center">
